@@ -1,8 +1,10 @@
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
 # Create your models here.
 
 # jeden do wielu Organization --> Present
+# jeden do jeden Adresses --> Organization/Present
 
 
 class Organization(models.Model):
@@ -22,5 +24,7 @@ class Present(models.Model):
 
     def __str__(self):
         return str(self.name), str(self.description)
+
+
 
 

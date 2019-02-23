@@ -1,14 +1,13 @@
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from django.views.generic.edit import View, CreateView, FormView
-from django.contrib.auth.models import User
+
 
 # Create your views here.
 
 
 from django.views import View
+
+from .forms import LoginForm
 
 
 class MainPage(View):
@@ -20,10 +19,27 @@ class MainPage(View):
 class LoginPage(View):
 
     def get(self, request):
+        form = LoginForm()
         return render(request, 'rzeczy/login.html')
 
     def post(self, request):
-        pass
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data['email'],
+                                password=form.cleaned_data['password'])
+            if user:
+                login(request, user)
+                if user.is_staff:
+                    return redirect('/admin/')
+                return render(request, 'rzeczy/form.html')
+
+        return render(request, 'rzeczy/login.html')
+
+    # def get(self, request):
+    #     return render(request, 'rzeczy/login.html')
+    #
+    # def post(self, request):
+    #     pass
 
 
 class RegisterPage(View):
@@ -32,17 +48,11 @@ class RegisterPage(View):
         return render(request, 'rzeczy/register.html')
 
     def post(self, request):
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('main_page')
-        else:
-            form = UserCreationForm()
-        return render(request, 'rzeczy/register.html', {'form': form})
+        pass
+
+
+
+
 
 
 
